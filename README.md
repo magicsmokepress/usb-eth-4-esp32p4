@@ -2,7 +2,7 @@
 
 Wired Ethernet on ESP32-P4 boards via any class-compliant USB dongle. Plug in a USB-to-Ethernet adapter, call `USBEth.begin()`, get an IP address.
 
-Uses the CDC-ECM (Ethernet Control Model) USB class protocol — no vendor-specific drivers needed. Works in both **Arduino IDE** and **ESP-IDF**.
+Uses the CDC-ECM (Ethernet Control Model) USB class protocol — no vendor-specific drivers needed. Works in both **Arduino IDE** and **ESP-IDF**. If it works with Nitendo Switch it will work here.
 
 ## The Easy Way
 
