@@ -6,9 +6,29 @@ Uses the CDC-ECM (Ethernet Control Model) USB class protocol — no vendor-speci
 
 ## The Easy Way
 
-### ESP-IDF (any ESP32-P4 board)
+### Arduino IDE
 
-No patching. No shims. Full sdkconfig control.
+Download [USBEth-install.zip](../../releases) and unzip it. Inside you'll find:
+
+```
+USBEth-install/
+├── install.bat          ← Windows: double-click this
+├── install.sh           ← Linux/Mac/WSL: run this
+├── USBEth/              ← the Arduino library
+└── tab5-bsp-patch/      ← M5Stack Tab5 BSP patch (applied automatically if needed)
+```
+
+**Windows:** Double-click `install.bat`. It installs the library and, if it detects an M5Stack Tab5 BSP, patches it automatically.
+
+**Linux/Mac/WSL:** Run `bash install.sh`.
+
+Then open Arduino IDE → File → Examples → USBEth → BasicEthernet, compile and flash.
+
+> **Not on Tab5?** The installer still works — it installs the library and skips the BSP patch. If your board package has `CONFIG_USB_HOST_ENABLE_ENUM_FILTER_CALLBACK=y` enabled (official Espressif ESP32 Arduino core), USB Ethernet just works with no patching.
+
+### ESP-IDF
+
+No installer needed. No patching. Full sdkconfig control.
 
 ```bash
 cd examples/basic
@@ -16,23 +36,7 @@ idf.py set-target esp32p4
 idf.py build flash monitor
 ```
 
-The `sdkconfig.defaults` enables everything you need: `CONFIG_USB_HOST_ENABLE_ENUM_FILTER_CALLBACK`, lwIP tuning, PSRAM. Just build and flash.
-
-### Arduino IDE (official Espressif ESP32 Board Package)
-
-If your board uses the **official Espressif Arduino core** (not a vendor BSP), you have sdkconfig control. Enable the enum filter callback in your board's sdkconfig:
-
-```
-CONFIG_USB_HOST_ENABLE_ENUM_FILTER_CALLBACK=y
-```
-
-Then install the library:
-
-1. Copy `arduino/USBEth/` to your `~/Arduino/libraries/` folder
-2. Open File → Examples → USBEth → BasicEthernet
-3. Compile and flash
-
-For best throughput, also add the lwIP tuning flags (see `examples/basic/sdkconfig.defaults` for the full list).
+The `sdkconfig.defaults` enables everything: `CONFIG_USB_HOST_ENABLE_ENUM_FILTER_CALLBACK`, lwIP tuning, PSRAM. Just build and flash.
 
 ### Minimal Sketch
 
@@ -51,36 +55,19 @@ void loop() {
 }
 ```
 
-That's it. If your board and BSP give you sdkconfig control, USB Ethernet just works.
-
 ---
 
 ## The Hard Way (M5Stack Tab5 / Vendor BSPs)
+
+The installer above handles this automatically, but if you want to understand what it does (or do it manually), read on.
 
 The M5Stack BSP ships pre-compiled libraries from an older IDF snapshot with `CONFIG_USB_HOST_ENABLE_ENUM_FILTER_CALLBACK` disabled. You can't change this from an Arduino sketch — the setting is baked into the BSP's `libusb.a`. Without it, the USB host stack silently ignores the enum filter callback, the dongle stays in vendor-specific mode, and CDC-ECM is unreachable.
 
 The fix is a one-time BSP patch that replaces the relevant `.a` files, adds component headers, and updates the linker flags. This also swaps `liblwip.a` for a version with tuned TCP settings (without this, throughput is 0.18 Mbps instead of 6+ Mbps).
 
-### Option A: Use Pre-Built Binaries (recommended)
+### Building from Source
 
-Download the pre-built BSP patch from the [Releases](../../releases) page, then:
-
-```bash
-# Unzip the patch
-unzip usb-eth-bsp-patch.zip
-
-# Patch the BSP (auto-detects M5Stack BSP location)
-bash install.sh
-
-# Install the Arduino library
-cp -r USBEth ~/Arduino/libraries/
-```
-
-Open Arduino IDE, select M5Stack Tab5 board, open File → Examples → USBEth → BasicEthernet, compile and flash. Done.
-
-### Option B: Build Everything from Source
-
-If you want to understand (or modify) what's going on, here's the full build-from-source process. This is what generated the pre-built binaries above.
+If you want to modify the patched libraries or understand the full process, here's how to build everything from scratch. This is what generated the pre-built binaries included in the installer.
 
 **Step 1: Build the patched libraries** (requires Linux/WSL, ~30 min one-time)
 
@@ -146,7 +133,7 @@ M5_P4="<your-bsp-esp32p4-path>"  # see install.sh output for auto-detection
 ~/.espressif/tools/riscv32-esp-elf/*/riscv32-esp-elf/bin/riscv32-esp-elf-ar rcs libusb_dwc_hal_shim.a usb_dwc_hal_shim.o
 ```
 
-**Step 3: Collect and install**
+**Step 3: Collect, patch, and install**
 
 ```bash
 # Collect libraries from lib-builder output
@@ -156,7 +143,7 @@ bash arduino/bsp-patch/collect_libs.sh .
 bash arduino/bsp-patch/install.sh
 
 # Install the Arduino library
-cp -r arduino/USBEth ~/Arduino/libraries/
+#    Sketch → Include Library → Add .ZIP Library → select USBEth.zip
 ```
 
 **Step 4: Flash**
