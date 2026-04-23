@@ -1,0 +1,63 @@
+# USBEth Basic Example — sdkconfig defaults for M5Stack Tab5 (ESP32-P4)
+#
+# Combines:
+#   - Tab5 hardware config (P4 eco2, PSRAM, flash, console)
+#   - USB host stack with enum filter (CRITICAL for class-compliant dongles)
+#   - lwIP throughput tuning (proven at 13 Mbps with parallel connections)
+#   - Arduino-as-IDF-component settings
+#   - Custom partition table (arduino-esp32 needs >1 MB app partition)
+
+# ── Target ──────────────────────────────────────────────────
+CONFIG_IDF_TARGET="esp32p4"
+CONFIG_FREERTOS_HZ=1000
+
+# Tab5 uses ESP32-P4 eco2 (chip rev v1.3).
+CONFIG_ESP32P4_REV_MIN_0=y
+
+# ── Flash & partition table ────────────────────────────────
+CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
+CONFIG_PARTITION_TABLE_FILENAME="partitions.csv"
+
+# ── PSRAM (Tab5: 32 MB OPI) ────────────────────────────────
+CONFIG_SPIRAM=y
+CONFIG_SPIRAM_MODE_OCT=y
+CONFIG_SPIRAM_SPEED_120M=y
+CONFIG_SPIRAM_USE_MALLOC=y
+
+# ── USB host stack ──────────────────────────────────────────
+# CRITICAL: enum_filter_cb selects the ECM configuration on dongles
+# that default to vendor-specific mode. Without this, ECM is unreachable.
+CONFIG_USB_HOST_ENABLE_ENUM_FILTER_CALLBACK=y
+CONFIG_USB_HOST_HUBS_SUPPORTED=y
+CONFIG_USB_HOST_CONTROL_TRANSFER_MAX_SIZE=512
+
+# ── lwIP tuning ────────────────────────────────────────────
+# Stock defaults: ~5.7 KB TCP windows = 0.18 Mbps.
+# These settings: 64 KB windows + scaling = 6.78 Mbps single, 13 Mbps parallel.
+CONFIG_LWIP_IPV4=y
+CONFIG_LWIP_DHCP_DOES_ARP_CHECK=y
+CONFIG_LWIP_DNS_SUPPORT_MDNS_QUERIES=y
+CONFIG_LWIP_TCP_WND_DEFAULT=65535
+CONFIG_LWIP_TCP_SND_BUF_DEFAULT=65535
+CONFIG_LWIP_TCP_RECVMBOX_SIZE=32
+CONFIG_LWIP_TCPIP_RECVMBOX_SIZE=32
+CONFIG_LWIP_TCP_MSL=5000
+CONFIG_LWIP_TCP_MSS=1440
+CONFIG_LWIP_TCP_WND_SCALE=y
+CONFIG_LWIP_TCP_RCV_SCALE=3
+CONFIG_LWIP_IRAM_OPTIMIZATION=y
+
+# ── Arduino-as-IDF-component ───────────────────────────────
+CONFIG_AUTOSTART_ARDUINO=y
+CONFIG_FREERTOS_ENABLE_BACKWARD_COMPATIBILITY=y
+
+# ── Console & stack sizes ──────────────────────────────────
+CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG=y
+CONFIG_ESP_MAIN_TASK_STACK_SIZE=8192
+CONFIG_ESP_SYSTEM_EVENT_TASK_STACK_SIZE=4096
+
+# ── Logging ────────────────────────────────────────────────
+CONFIG_LOG_DEFAULT_LEVEL_INFO=y
+CONFIG_LOG_MAXIMUM_LEVEL_DEBUG=y

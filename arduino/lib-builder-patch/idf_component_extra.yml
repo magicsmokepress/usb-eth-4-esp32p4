@@ -1,0 +1,9 @@
+# Add these dependencies to the lib-builder's main/idf_component.yml
+# They'll be compiled into the Arduino core static libraries.
+#
+# After cloning esp32-arduino-lib-builder, append these lines to
+# the existing main/idf_component.yml (create it if it doesn't exist).
+
+  espressif/iot_usbh_ecm: "^0.2.1"
+  espressif/iot_usbh_cdc: "^3.0.0"
+  espressif/iot_eth: "*"

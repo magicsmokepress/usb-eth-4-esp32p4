@@ -1,0 +1,12 @@
+--- a/configs/defconfig.esp32p4
++++ b/configs/defconfig.esp32p4
+@@ -1,4 +1,8 @@
+-# CONFIG_ESP32P4_SELECTS_REV_LESS_V3 is not set
++# USBEth: Support ESP32-P4 eco2 (Tab5 chip rev v1.3)
++CONFIG_ESP32P4_REV_MIN_0=y
++
++# USBEth: Enable USB enumeration filter (CRITICAL for CDC-ECM config selection)
++CONFIG_USB_HOST_ENABLE_ENUM_FILTER_CALLBACK=y
+ CONFIG_IDF_EXPERIMENTAL_FEATURES=y
+ CONFIG_SPIRAM=y
+ # CONFIG_ESP_TASK_WDT_CHECK_IDLE_TASK_CPU1 is not set

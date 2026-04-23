@@ -1,0 +1,6 @@
+## USBEth basic example
+## Dependencies are pulled in transitively via the usb_eth component.
+## Only list what main.cpp directly needs beyond what usb_eth provides.
+dependencies:
+  espressif/arduino-esp32: "^3.3.0"
+  idf: ">=5.4.0"

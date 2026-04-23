@@ -1,0 +1,11 @@
+version: "0.1.0"
+description: "USB Ethernet for ESP32-P4 via CDC-ECM — Arduino-friendly API"
+url: "https://github.com/magicsmokepress/usb-eth-4-esp32p4"
+targets:
+  - esp32p4
+dependencies:
+  espressif/arduino-esp32: "^3.3.0"
+  espressif/iot_usbh_ecm: "^0.2.1"
+  espressif/iot_usbh_cdc: "^3.0.0"
+  espressif/iot_eth: "*"
+  idf: ">=5.4.0"
