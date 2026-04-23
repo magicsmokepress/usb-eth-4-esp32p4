@@ -8,14 +8,14 @@ Uses the CDC-ECM (Ethernet Control Model) USB class protocol — no vendor-speci
 
 ### Arduino IDE
 
-Download [USBEth-install.zip](../../releases) and unzip it. Inside you'll find:
+Download USBEth.zip and unzip it. Inside you'll find:
 
 ```
 USBEth-install/
 ├── install.bat          ← Windows: double-click this
 ├── install.sh           ← Linux/Mac/WSL: run this
 ├── USBEth/              ← the Arduino library
-└── tab5-bsp-patch/      ← M5Stack Tab5 BSP patch (applied automatically if needed)
+└── tab5-bsp-patch/      ← M5Stack Tab5 BSP patch (should apply automatically if needed)
 ```
 
 **Windows:** Double-click `install.bat`. It installs the library and, if it detects an M5Stack Tab5 BSP, patches it automatically.
