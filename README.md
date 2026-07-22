@@ -270,6 +270,21 @@ examples/basic/              # IDF example project
 docs/                        # Blog post + technical diary
 ```
 
+## Prior Art
+
+CDC-ECM USB-host Ethernet on Espressif chips already exists upstream; this
+project is best understood as an Arduino-friendly integration over that work.
+
+- **[iot_usbh_ecm](https://components.espressif.com/components/espressif/iot_usbh_ecm)** (Espressif) — the official USB-Host ECM driver: auto-scans descriptors, hotplug, and lists **ESP32-P4** as a supported target ([docs](https://docs.espressif.com/projects/esp-iot-solution/en/latest/usb/usb_host/usb_ecm.html)). *Canonical upstream / strongest prior art.*
+- **[cdc_ecm_host](https://components.espressif.com/components/gadget-man/cdc_ecm_host)** (gadget-man) — a third-party USB-Host CDC-ECM driver (RTL8152/8153). *Independent same-approach implementation.*
+- **[iot_usbh_cdc](https://components.espressif.com/components/espressif/iot_usbh_cdc)** (Espressif) — a simplified USB-Host CDC transport that ECM sits on. *Building block.*
+- **[ESP-IDF USB Host Library](https://docs.espressif.com/projects/esp-idf/en/stable/esp32p4/api-reference/peripherals/usb_host.html)** — the foundational USB-host stack, ties into `esp_netif`/lwIP. *Foundation.*
+- **[TinyUSB](https://github.com/hathach/tinyusb)** — cross-platform USB stack with CDC-ECM/RNDIS/NCM networking. *Alternative-stack precedent (CDC-ECM on other MCUs).*
+
+Given Espressif's own `iot_usbh_ecm` already delivers CDC-ECM host Ethernet on
+the P4, this project positions itself as an Arduino-friendly wrapper and
+integration rather than a novel driver.
+
 ## License
 
 MIT
